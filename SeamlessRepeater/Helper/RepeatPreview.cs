@@ -1,0 +1,104 @@
+﻿using System;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using static SeamlessRepeater.Helper.ImageUtilities;
+using static SeamlessRepeater.Helper.FileHelper;
+using System.Windows.Media.Imaging;
+using SeamlessRepeater.Windows;
+
+namespace SeamlessRepeater.Helper
+{
+    public class RepeatPreview
+    {
+        public DrawingImage Image;
+        public Image RepeatImage;
+
+        private ZoomBorder _repeatZoomBorder;
+        private Workspace _workspace;
+        private MainWindow _window;
+
+        public RepeatPreview(MainWindow window, Grid repeatPreviewHolder, Workspace workspace)
+        {
+            _window = window;
+            _workspace = workspace;
+
+            RepeatImage = new Image() { Width = Workspace.ImageGridSize, Height = Workspace.ImageGridSize };
+            var repeatImageGrid = new Grid() { Width = Workspace.ImageGridSize, Height = Workspace.ImageGridSize, Background = CustomBrushes.CheckerBoardDark };
+            repeatImageGrid.Children.Add(RepeatImage);
+            _repeatZoomBorder = new ZoomBorder(_window, repeatPreviewHolder);
+            _repeatZoomBorder.Child = repeatImageGrid;
+            repeatPreviewHolder.Children.Add(_repeatZoomBorder);
+
+            _window.PreviewZoomInButton.Click += (s, e) => PreviewZoom(true);
+            _window.PreviewZoomOutButton.Click += (s, e) => PreviewZoom(false);
+            _window.PreviewCenterButton.Click += (s, e) => _repeatZoomBorder.Reset();
+            _window.PreviewRepeatButton.Click += (s, e) => DrawRepeat();
+
+            _window.SaveRepeatButton.Click += (s, e) => SaveRepeat();
+
+        }
+
+        public void DrawRepeat()
+        {
+            var previewSource = RenderLayerPanelsInGrid(Workspace.ImageGrid, Workspace.ImageGridSize);
+            if (!double.TryParse(_window.TileSizeBox.Text, out double tileSize)) return;
+            Draw(previewSource, RepeatImage, tileSize);
+        }
+
+        private void Draw(DrawingImage source, Image target, double tileSize)
+        {
+            var drawingGroup = new DrawingGroup();
+
+            //draw transparent background to fill the drawing group (forces it to be the right size)
+            drawingGroup.Children.Add(new GeometryDrawing(Brushes.Transparent, null, new RectangleGeometry(new Rect(0, 0, target.Width, target.Height))));
+
+            var imageToRepeat = source;
+            var (imageWidth, imageHeight) = ImageFit(imageToRepeat, tileSize, tileSize);
+
+            int horizontalTiles = (int)Math.Ceiling(target.Width / imageWidth);
+            int verticalTiles = (int)Math.Ceiling(target.Height / imageHeight);
+            for (int i = 0; i < horizontalTiles; i++)
+            {
+                for (int j = 0; j < verticalTiles; j++)
+                {
+                    var image = new ImageDrawing();
+                    image.Rect = new Rect(imageWidth * i, imageHeight * j, imageWidth, imageHeight);
+                    image.ImageSource = imageToRepeat;
+
+                    drawingGroup.Children.Add(image);
+                }
+            }
+
+            Image = new DrawingImage(drawingGroup);
+            target.Source = Image;
+        }
+
+        public void PreviewZoom(bool isIn)
+        {
+            double scaleFactor = -0.2;
+            if (isIn)
+                scaleFactor = 0.2;
+
+            _repeatZoomBorder.Zoom(scaleFactor);
+        }
+        /*
+        private void SaveRepeat()
+        {
+            //TODO: find correct scaling value by comparing the tile size (set in text box) to the size of the workspace
+            FileHelper.SaveAsPng(Image, 5);
+        }
+        */
+        private void SaveRepeat()
+        {
+            //get image output size from user
+            var saveImageWindow = new SaveImageWindow();
+            if (!saveImageWindow.ShowDialog() == true) return;
+
+            var scale = saveImageWindow.ImageScale;
+
+            //render layers and save them
+            FileHelper.SaveAsPng(Image, scale);
+        }
+    }
+}

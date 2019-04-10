@@ -1,0 +1,15 @@
+﻿<Window x:Class="SeamlessRepeater.Windows.SaveImageWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SeamlessRepeater.Windows"
+        mc:Ignorable="d"
+        Title="SaveImageWindow" Height="342.631" Width="419.474">
+    <Grid x:Name="WindowGrid">
+        <Slider x:Name="Slider" HorizontalAlignment="Stretch" Margin="32,148,32,0" Maximum="20" VerticalAlignment="Top" Height="24"/>
+        <Label x:Name="ImageSizeLabel" Content="Tile size: " HorizontalAlignment="Left" Margin="32,96,0,0" VerticalAlignment="Top" FontSize="18"/>
+        <Label Content="Tile export settings" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="32" VerticalAlignment="Top" FontSize="18"/>
+        <Button x:Name="OkButton" Content="Save" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="75" Margin="0,0,0,64"/>
+    </Grid>
+</Window>

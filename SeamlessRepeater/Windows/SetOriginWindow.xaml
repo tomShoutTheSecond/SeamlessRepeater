@@ -1,0 +1,24 @@
+﻿<Window x:Class="SeamlessRepeater.Windows.SetOriginWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SeamlessRepeater.Windows"
+        mc:Ignorable="d"
+        Title="SetOriginWindow" Height="450" Width="400">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="7*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Border Background="Gray" Margin="16" Width="{Binding ActualHeight, RelativeSource={RelativeSource Self}}">
+            <Grid x:Name="DrawableGrid">
+                <Viewbox x:Name="OriginViewbox" Grid.Row="0">
+                    <Image x:Name="OriginPreviewImage" Stretch="Uniform"/>
+                </Viewbox>
+            </Grid>
+        </Border>
+        <Button x:Name="AcceptOriginButton" Grid.Row="1" Content="OK" HorizontalAlignment="Center" Margin="0,16,0,0" VerticalAlignment="Top" Width="75"/>
+    </Grid>
+</Window>

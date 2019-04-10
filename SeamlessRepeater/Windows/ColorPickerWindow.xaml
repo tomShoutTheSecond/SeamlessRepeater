@@ -1,0 +1,33 @@
+﻿<Window x:Class="SeamlessRepeater.Windows.ColorPickerWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SeamlessRepeater.Windows"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        mc:Ignorable="d"
+        Title="ColorPickerWindow" Height="320" Width="400" ResizeMode="NoResize">
+    <Grid x:Name="WindowGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="64"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="48"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border x:Name="ColorPreviewOuterBorder" MouseDown="OnColorClick" BorderBrush="Gray" BorderThickness="1" Grid.Row="1" Margin="16, 0, 16, 16" Padding="16" Width="140" Height="140" SnapsToDevicePixels="True">
+            <Border x:Name="ColorPreviewBackground">
+                <Border x:Name="ColorPreviewBorder"/>
+            </Border>
+        </Border>
+
+        <Label Content="Background Color" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" Grid.ColumnSpan="2"></Label>
+        <Button Content="OK" Grid.Row="2" Width="48" Margin="0,0,0,16" Click="OnOkClick" Grid.ColumnSpan="2"></Button>
+        <Slider x:Name="AlphaSlider" ValueChanged="OnAlphaSliderMove" Maximum="100" Grid.Column="1" HorizontalAlignment="Stretch" Grid.Row="1" VerticalAlignment="Top" Margin="0,32,16,0"/>
+        <Label x:Name="AlphaLabel" Content="Alpha: 100%" Grid.Column="1" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Height="32" VerticalAlignment="Top" Margin="0,0,16,0"/>
+        <TextBox x:Name="HexTextBox" FontSize="16" BorderBrush="Transparent" Grid.Column="1" HorizontalAlignment="Center" Height="23" Margin="0,72,16,0" Grid.Row="1" TextWrapping="NoWrap" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
