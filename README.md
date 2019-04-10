@@ -2,5 +2,5 @@
 
 Windows application for creating seamless tiles
 
-Download:
-[download](SeamlessRepeater/bin/Debug/SeamlessRepeater.exe)
+Download latest executable:
+[SeamlessRepeater.exe](SeamlessRepeater/bin/Debug/SeamlessRepeater.exe)
