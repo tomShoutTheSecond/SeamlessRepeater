@@ -18,7 +18,6 @@ namespace SeamlessRepeater.Helper
         {
             var dialog = new CustomDialog("Error", errorMessage, CustomDialogType.OK);
             dialog.ShowDialog();
-            //MessageBox.Show(errorMessage, "Error");
 
             string fileName = "SeamLogs.txt";
             string folder = $"{Environment.GetFolderPath(_file)}{_programFolder}";
