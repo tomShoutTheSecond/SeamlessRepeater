@@ -78,6 +78,18 @@ namespace SeamlessRepeater.Helper
         }
 
         /// <summary>
+        /// Returns an icon from the Icons folder
+        /// </summary>
+        /// <param name="iconName">Filename of icon, without directory or file extension (eg "circle-outline")</param>
+        public static BitmapImage GetIcon(string iconName)
+        {
+            //make new image
+            string uriString = $"pack://application:,,,/SeamlessRepeater;component/Icons/{iconName}.png";
+            var uri = new Uri(uriString, UriKind.Absolute);
+            return new BitmapImage(uri);
+        }
+
+        /// <summary>
         /// Renders all the layers held in a grid to a drawing
         /// </summary>
         /// <param name="grid">Grid holding LayerPanel(s)</param>

@@ -27,6 +27,8 @@ namespace SeamlessRepeater.Windows
         {
             InitializeComponent();
 
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
             WindowGrid.Background = CustomBrushes.WindowBackground;
 
             OkButton.Click += OkButton_Click;

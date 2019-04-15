@@ -190,5 +190,12 @@
   <ItemGroup>
     <Resource Include="Icons\magnify-minus-outline.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\circle-outline.png" />
+    <Resource Include="Icons\circle-slice-7.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\refresh.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

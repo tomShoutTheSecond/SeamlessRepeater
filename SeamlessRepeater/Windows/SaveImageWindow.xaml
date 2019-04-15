@@ -10,6 +10,6 @@
         <Slider x:Name="Slider" HorizontalAlignment="Stretch" Margin="32,148,32,0" Maximum="20" VerticalAlignment="Top" Height="24"/>
         <Label x:Name="ImageSizeLabel" Content="Tile size: " HorizontalAlignment="Left" Margin="32,96,0,0" VerticalAlignment="Top" FontSize="18"/>
         <Label Content="Image export settings" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" Margin="32" VerticalAlignment="Top" FontSize="18"/>
-        <Button x:Name="OkButton" Content="Save" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="75" Margin="0,0,0,64"/>
+        <Button x:Name="OkButton" Content="Save" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="64" Height="26" Margin="0,0,0,64"/>
     </Grid>
 </Window>

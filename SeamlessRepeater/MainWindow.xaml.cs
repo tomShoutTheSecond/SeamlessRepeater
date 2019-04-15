@@ -35,6 +35,8 @@ namespace SeamlessRepeater
             InitializeComponent();
 
             Initialize();
+
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         private void Initialize()

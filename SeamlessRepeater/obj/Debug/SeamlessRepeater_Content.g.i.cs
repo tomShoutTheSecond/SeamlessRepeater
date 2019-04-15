@@ -8,6 +8,6 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("icons/magnify-minus-outline.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("icons/refresh.png")]
 
 

@@ -130,7 +130,7 @@ namespace SeamlessRepeater.Helper
 
             Dispatcher.Invoke(() =>
             {
-                _window.LoadingLabel.Visibility = Visibility.Visible;
+                _window.BusyIndicator.Source = GetIcon("circle-slice-7");
                 _window.Cursor = Cursors.Wait;
             });
 
@@ -364,7 +364,7 @@ namespace SeamlessRepeater.Helper
             while (_drawableBitmapImage == null)
                 await Task.Delay(100);
 
-            _window.LoadingLabel.Visibility = Visibility.Visible;
+            _window.BusyIndicator.Source = GetIcon("circle-slice-7");
 
             _window.ForceCursor = true;
             _window.Cursor = Cursors.Wait;
@@ -505,7 +505,7 @@ namespace SeamlessRepeater.Helper
             }
             finally
             {
-                _window.LoadingLabel.Visibility = Visibility.Hidden;
+                _window.BusyIndicator.Source = GetIcon("circle-outline");
                 _window.Cursor = Cursors.Arrow;
             }
         }

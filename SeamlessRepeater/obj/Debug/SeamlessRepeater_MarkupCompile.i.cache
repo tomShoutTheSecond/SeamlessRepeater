@@ -4,17 +4,17 @@
 winexe
 C#
 .cs
-C:\Users\Tom\source\repos\SeamlessRepeater\SeamlessRepeater\obj\Debug\
+C:\Users\Tom\Documents\SeamlessRepeater\SeamlessRepeater\obj\Debug\
 SeamlessRepeater
 none
 false
 DEBUG;TRACE
-C:\Users\Tom\source\repos\SeamlessRepeater\SeamlessRepeater\App.xaml
+C:\Users\Tom\Documents\SeamlessRepeater\SeamlessRepeater\App.xaml
 51182962900
 
 24-613045608
-222145167991
+221054480610
 MainWindow.xaml;Windows\ColorPickerWindow.xaml;Windows\SaveImageWindow.xaml;Windows\SetOriginWindow.xaml;Windows\CustomDialog.xaml;
 
-True
+False
 

@@ -17,11 +17,15 @@ namespace SeamlessRepeater.Helper
         private ZoomBorder _repeatZoomBorder;
         private Workspace _workspace;
         private MainWindow _window;
+        private int _tilesPerRow = 5;
 
         public RepeatPreview(MainWindow window, Grid repeatPreviewHolder, Workspace workspace)
         {
             _window = window;
             _workspace = workspace;
+
+            _window.RepeatOptionsBorder.Background = CustomBrushes.VeryDarkGray;
+            _window.RepeatOptionsBorder.BorderBrush = Brushes.Gray;
 
             RepeatImage = new Image() { Width = Workspace.ImageGridSize, Height = Workspace.ImageGridSize };
             var repeatImageGrid = new Grid() { Width = Workspace.ImageGridSize, Height = Workspace.ImageGridSize, Background = CustomBrushes.CheckerBoardDark };
@@ -34,6 +38,8 @@ namespace SeamlessRepeater.Helper
             _window.PreviewZoomOutButton.Click += (s, e) => PreviewZoom(false);
             _window.PreviewCenterButton.Click += (s, e) => _repeatZoomBorder.Reset();
             _window.PreviewRepeatButton.Click += (s, e) => DrawRepeat();
+            _window.PreviewSizeUpButton.Click += (s, e) => OnPreviewSizeUp();
+            _window.PreviewSizeDownButton.Click += (s, e) => OnPreviewSizeDown();
 
             _window.SaveRepeatButton.Click += (s, e) => SaveRepeat();
 
@@ -42,22 +48,23 @@ namespace SeamlessRepeater.Helper
         public void DrawRepeat()
         {
             var previewSource = RenderLayerPanelsInGrid(Workspace.ImageGrid, Workspace.ImageGridSize);
-            if (!double.TryParse(_window.TileSizeBox.Text, out double tileSize)) return;
-            Draw(previewSource, RepeatImage, tileSize);
+            
+            Draw(previewSource, RepeatImage, _tilesPerRow);
         }
 
-        private void Draw(DrawingImage source, Image target, double tileSize)
+        private void Draw(DrawingImage source, Image target, int tilesPerRow)
         {
             var drawingGroup = new DrawingGroup();
 
             //draw transparent background to fill the drawing group (forces it to be the right size)
-            drawingGroup.Children.Add(new GeometryDrawing(Brushes.Transparent, null, new RectangleGeometry(new Rect(0, 0, target.Width, target.Height))));
+            drawingGroup.Children.Add(new GeometryDrawing(Workspace.BackgroundLayer.Background, null, new RectangleGeometry(new Rect(0, 0, target.Width, target.Height))));
 
             var imageToRepeat = source;
+            var tileSize = Workspace.ImageGridSize / tilesPerRow;
             var (imageWidth, imageHeight) = ImageFit(imageToRepeat, tileSize, tileSize);
 
-            int horizontalTiles = (int)Math.Ceiling(target.Width / imageWidth);
-            int verticalTiles = (int)Math.Ceiling(target.Height / imageHeight);
+            int horizontalTiles = tilesPerRow;
+            int verticalTiles = tilesPerRow;
             for (int i = 0; i < horizontalTiles; i++)
             {
                 for (int j = 0; j < verticalTiles; j++)
@@ -82,13 +89,7 @@ namespace SeamlessRepeater.Helper
 
             _repeatZoomBorder.Zoom(scaleFactor);
         }
-        /*
-        private void SaveRepeat()
-        {
-            //TODO: find correct scaling value by comparing the tile size (set in text box) to the size of the workspace
-            FileHelper.SaveAsPng(Image, 5);
-        }
-        */
+        
         private void SaveRepeat()
         {
             //get image output size from user
@@ -99,6 +100,20 @@ namespace SeamlessRepeater.Helper
 
             //render layers and save them
             FileHelper.SaveAsPng(Image, scale);
+        }
+
+        private void OnPreviewSizeUp()
+        {
+            _tilesPerRow++;
+            DrawRepeat();
+        }
+
+        private void OnPreviewSizeDown()
+        {
+            if (_tilesPerRow < 2) return;
+
+            _tilesPerRow--;
+            DrawRepeat();
         }
     }
 }
