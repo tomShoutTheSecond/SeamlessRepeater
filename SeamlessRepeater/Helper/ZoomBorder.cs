@@ -128,7 +128,7 @@ namespace SeamlessRepeater.Helper
         {
             if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
             {
-                _parent.Cursor = Cursors.Hand;
+                _window.Cursor = Cursors.Hand;
                 _holdingCtrl = true;
             }
         }
@@ -137,7 +137,7 @@ namespace SeamlessRepeater.Helper
         {
             if (e.Key == Key.LeftCtrl || e.Key == Key.RightCtrl)
             {
-                _parent.Cursor = Cursors.Arrow;
+                _window.Cursor = Cursors.Arrow;
                 _holdingCtrl = false;
             }
         }
@@ -163,7 +163,7 @@ namespace SeamlessRepeater.Helper
         {
             if (_child != null)
             {
-                _parent.Cursor = Cursors.Hand;
+                _window.Cursor = Cursors.Hand;
 
                 var tt = GetTranslateTransform(_child);
                 _start = e.GetPosition(this);
@@ -176,21 +176,21 @@ namespace SeamlessRepeater.Helper
         {
             if (_child != null)
             {
-                _parent.Cursor = Cursors.Arrow;
+                _window.Cursor = Cursors.Arrow;
                 _child.ReleaseMouseCapture();
             }
         }
 
         private void OnMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (!_holdingCtrl) return;
+            if (Keyboard.Modifiers != ModifierKeys.Control) return;
 
             OnMouseRightButtonDown(sender, e);
         }
 
         private void OnMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (!_holdingCtrl) return;
+            if (Keyboard.Modifiers != ModifierKeys.Control) return;
 
             OnMouseRightButtonUp(sender, e);
         }

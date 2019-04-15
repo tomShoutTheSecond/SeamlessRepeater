@@ -183,7 +183,7 @@
                     <Button x:Name="PreviewSizeUpButton" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,8,8,8" ToolTip="More tiles">
                         <Image Source="Icons/plus.png" Width="24" Height="24" SnapsToDevicePixels="True"/>
                     </Button>
-                    <Button x:Name="PreviewSizeDownButton" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,8,8,8" ToolTip="Less tiles">
+                    <Button x:Name="PreviewSizeDownButton" Grid.Row="1" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,8,8,8" ToolTip="Fewer tiles">
                         <Image Source="Icons/minus.png" Width="24" Height="24" SnapsToDevicePixels="True"/>
                     </Button>
                 </StackPanel>

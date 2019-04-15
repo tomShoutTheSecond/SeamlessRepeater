@@ -42,7 +42,7 @@ namespace SeamlessRepeater.Helper
 
         private bool _isFirstDraw = true;
         private bool _isFirstOutlineDraw = true;
-        private double _imageSize;
+        private double _percentageSize;
         private Image _imageControl;
         private Image _outlineImageControl;
         private BitmapImage _originalBitmapImage;
@@ -76,7 +76,8 @@ namespace SeamlessRepeater.Helper
             SetZIndex(this, Index);
 
             //set image size
-            _imageSize = parent.Width * 0.4;
+            var sizeToFillWorkspace = (double)Workspace.ImageGridSize / (double)bitmapImage.PixelWidth;
+            _percentageSize = sizeToFillWorkspace * 0.4;
 
             //create drawing area
 
@@ -134,13 +135,7 @@ namespace SeamlessRepeater.Helper
                 _window.Cursor = Cursors.Wait;
             });
 
-            //TODO: this code is absolutely wank, size changes at random with rotation
-            /*
-            var oldSize = Math.Max(_drawableBitmapImage.PixelWidth, _drawableBitmapImage.PixelHeight);*/
             _drawableBitmapImage = await RotateImage(_originalBitmapImage, angle);
-            /*var newSize = Math.Max(_drawableBitmapImage.PixelWidth, _drawableBitmapImage.PixelHeight);
-            var sizeDifference = (double)newSize / (double)oldSize;
-            _imageSize *= sizeDifference;*/
 
             Dispatcher.Invoke(() =>
             {
@@ -151,28 +146,21 @@ namespace SeamlessRepeater.Helper
 
         public void SizeDown()
         {
-            var sizeChange = 50;
+            double sizeChangeCoef = 0.8;
 
-            if (_imageSize - sizeChange < Width * 0.1)
-            {
-                var oldImageSize = _imageSize;
-                _imageSize = Width * 0.1;
+            int originalImageLongestDimension = Math.Max(_drawableBitmapImage.PixelWidth, _drawableBitmapImage.PixelHeight);
+            double sizeBefore = originalImageLongestDimension * _percentageSize;
 
-                //keep central
-                var sizeDifference = oldImageSize - _imageSize;
-                _x += sizeDifference * 0.5;
-                _y += sizeDifference * 0.5;
+            //do the size change
+            _percentageSize *= sizeChangeCoef;
 
-                Draw();
-                DrawOutline();
-                return;
-            }
+            double sizeAfter = originalImageLongestDimension * _percentageSize;
 
-            _imageSize -= sizeChange;
+            var sizeChange = sizeAfter - sizeBefore;
 
             //keep central
-            _x += sizeChange * 0.5;
-            _y += sizeChange * 0.5;
+            _x -= sizeChange * 0.5;
+            _y -= sizeChange * 0.5;
 
             Draw();
             DrawOutline();
@@ -180,25 +168,26 @@ namespace SeamlessRepeater.Helper
 
         public void SizeUp()
         {
-            var sizeChange = 50;
+            double sizeChangeCoef = 1.25;
 
-            if (_imageSize + sizeChange >= Width)
+            int originalImageLongestDimension = Math.Max(_drawableBitmapImage.PixelWidth, _drawableBitmapImage.PixelHeight);
+            double sizeBefore = originalImageLongestDimension * _percentageSize;
+
+            var sizeToFillWorkspace = (double)Workspace.ImageGridSize / (double)_drawableBitmapImage.PixelWidth;
+            if (_percentageSize * sizeChangeCoef > sizeToFillWorkspace) //new image will be bigger than workspace
             {
-                var oldImageSize = _imageSize;
-
-                _imageSize = Width;
-
-                //keep central
-                var sizeDifference = oldImageSize - _imageSize;
-                _x += sizeDifference * 0.5;
-                _y += sizeDifference * 0.5;
-
-                Draw();
-                DrawOutline();
-                return;
+                //make it the max size possible
+                _percentageSize = sizeToFillWorkspace;
+            }
+            else
+            {
+                //do the size change
+                _percentageSize *= sizeChangeCoef;
             }
 
-            _imageSize += sizeChange;
+            double sizeAfter = originalImageLongestDimension * _percentageSize;
+
+            var sizeChange = sizeAfter - sizeBefore;
 
             //keep central
             _x -= sizeChange * 0.5;
@@ -233,7 +222,10 @@ namespace SeamlessRepeater.Helper
                 ClearOutline();
 
                 var mainLayer = new ImageDrawing();
-                var (totalImageWidth, totalImageHeight) = ImageFit(_drawableBitmapImage, _imageSize, _imageSize);
+
+                int originalImageLongestDimension = Math.Max(_drawableBitmapImage.PixelWidth, _drawableBitmapImage.PixelHeight);
+                double longestDimensionScaled = originalImageLongestDimension * _percentageSize;
+                var (totalImageWidth, totalImageHeight) = ImageFit(_drawableBitmapImage, longestDimensionScaled, longestDimensionScaled);
                 double leftCrop = 0;
                 double rightCrop = 0;
                 double topCrop = 0;
@@ -270,16 +262,11 @@ namespace SeamlessRepeater.Helper
 
                 if (croppedWidth > 0 && croppedHeight > 0)
                 {
-                    //var layerSource = SafeMakeCroppedBitmap(_bitmapImage, (int)(leftCrop * bitmapPixelsPerScreenPixel), (int)(topCrop * bitmapPixelsPerScreenPixel), (int)(croppedWidth * bitmapPixelsPerScreenPixel), (int)(croppedHeight * bitmapPixelsPerScreenPixel));
                     mainLayer.Rect = new Rect(ClipToCanvasEdges(_x, _y), new Size(croppedWidth, croppedHeight));
-                    //mainLayer.ImageSource = layerSource;
 
                     //draw rectangle around main layer
                     var rectangleDrawing = RectToDrawing(mainLayer.Rect, SelectionColor, true);
                     _outlineDrawingGroup.Children.Add(rectangleDrawing);
-
-                    //add main layer
-                    //_outlineDrawingGroup.Children.Add(mainLayer);
 
                     //save reference to current layer
                     _oldRects.Add(rectangleDrawing);
@@ -369,7 +356,7 @@ namespace SeamlessRepeater.Helper
             _window.ForceCursor = true;
             _window.Cursor = Cursors.Wait;
 
-            //allow UI to update
+            //allow busy indicator to update
             await Task.Delay(5);
 
             try
@@ -391,7 +378,10 @@ namespace SeamlessRepeater.Helper
                 _oldLayers = new List<Drawing>();
 
                 var mainLayer = new ImageDrawing();
-                var (totalImageWidth, totalImageHeight) = ImageFit(_drawableBitmapImage, _imageSize, _imageSize);
+
+                int originalImageLongestDimension = Math.Max(_drawableBitmapImage.PixelWidth, _drawableBitmapImage.PixelHeight);
+                double longestDimensionScaled = originalImageLongestDimension * _percentageSize;
+                var (totalImageWidth, totalImageHeight) = ImageFit(_drawableBitmapImage, longestDimensionScaled, longestDimensionScaled);
                 double leftCrop = 0;
                 double rightCrop = 0;
                 double topCrop = 0;
@@ -404,7 +394,6 @@ namespace SeamlessRepeater.Helper
                 }
                 else if (_x > Width - totalImageWidth)
                 {
-                    //rightCrop = -(Width - totalImageWidth) - _x;
                     rightCrop = _x - (Width - totalImageWidth);
                 }
 
@@ -415,7 +404,6 @@ namespace SeamlessRepeater.Helper
                 }
                 else if (_y > Height - totalImageHeight)
                 {
-                    //bottomCrop = -(Height - totalImageHeight) - _y;
                     bottomCrop = _y - (Height - totalImageHeight);
                 }
 
