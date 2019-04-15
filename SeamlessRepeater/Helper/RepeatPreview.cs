@@ -61,7 +61,12 @@ namespace SeamlessRepeater.Helper
 
             var imageToRepeat = source;
             var tileSize = Workspace.ImageGridSize / tilesPerRow;
-            var (imageWidth, imageHeight) = ImageFit(imageToRepeat, tileSize, tileSize);
+
+            double imageWidth = 0, imageHeight = 0;
+            if (source.Width != 0 || source.Height != 0) //avoid exception when removing last layer
+            {
+                (imageWidth, imageHeight) = ImageFit(imageToRepeat, tileSize, tileSize);
+            }
 
             int horizontalTiles = tilesPerRow;
             int verticalTiles = tilesPerRow;
