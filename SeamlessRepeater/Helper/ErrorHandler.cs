@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SeamlessRepeater.Windows;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -15,7 +16,9 @@ namespace SeamlessRepeater.Helper
 
         public static void Handle(string errorMessage, bool isError = true, Exception exception = null)
         {
-            MessageBox.Show(errorMessage, "Error");
+            var dialog = new CustomDialog("Error", errorMessage, CustomDialogType.OK);
+            dialog.ShowDialog();
+            //MessageBox.Show(errorMessage, "Error");
 
             string fileName = "SeamLogs.txt";
             string folder = $"{Environment.GetFolderPath(_file)}{_programFolder}";

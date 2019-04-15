@@ -9,7 +9,7 @@
         Title="{Binding DialogTitle}" SizeToContent="Height" Height="200" Width="250">
     
     <StackPanel>
-        <TextBlock Text="{Binding DialogMessage}" Margin="32,16"/>
+        <TextBlock Text="{Binding DialogMessage}" Margin="32,16" Height="Auto" TextWrapping="Wrap"/>
         <TextBox x:Name="InputTextBox" KeyDown="OnTextBoxKeyDown" Margin="32, 0, 32, 16" Text="{Binding DialogInputText}"/>
         <Grid x:Name="ButtonGrid">
             <Button x:Name="CancelButton" Content="Cancel" Click="OnCancelClick" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="32, 16, 0, 16" Width="64" Height="26"/>

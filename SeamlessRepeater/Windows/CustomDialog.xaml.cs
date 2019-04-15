@@ -50,6 +50,7 @@ namespace SeamlessRepeater.Windows
             {
                 case CustomDialogType.OK:
                     InputTextBox.Visibility = Visibility.Collapsed;
+                    CancelButton.Visibility = Visibility.Collapsed;
                     break;
                 case CustomDialogType.YesNo:
                     InputTextBox.Visibility = Visibility.Collapsed;
