@@ -33,7 +33,6 @@ namespace SeamlessRepeater.Windows
         /// <summary>
         /// Called when window is shown
         /// </summary>
-        /// <param name="e"></param>
         protected override void OnContentRendered(EventArgs e)
         {
             GetImageFromFile();
@@ -51,7 +50,7 @@ namespace SeamlessRepeater.Windows
         private void Finish()
         {
             var mainWindow = (MainWindow)Application.Current.MainWindow;
-            mainWindow.FinishImageImport((BitmapImage)OriginPreviewImage.Source);
+            mainWindow.FinishImageImport((BitmapImage)OriginPreviewImage.Source, _originPointer.GetPosition());
             Close();
         }
 
@@ -70,8 +69,6 @@ namespace SeamlessRepeater.Windows
             }
 
             OriginPreviewImage.Source = image;
-
-            Finish();
         }
     }
 }

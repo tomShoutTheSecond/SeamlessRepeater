@@ -40,10 +40,38 @@
             </Setter>
         </Style>
 
-        <!-- ToolTip Style -->
-        <Style TargetType="{x:Type ToolTip}">
-            <Setter Property="Control.Background" Value="#222"/>
+        <!-- Menu style -->
+        <Style x:Key="{x:Type Menu}" TargetType="{x:Type Menu}">
+            <Setter Property="Background" Value="#222"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Menu}">
+                        <!-- here is where you change the border thickness to zero on the menu-->
+                        <Border BorderThickness="0">
+                            <StackPanel ClipToBounds="True" Orientation="Horizontal"
+                      IsItemsHost="True"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
+        <Style x:Key="{x:Type MenuItem}" TargetType="{x:Type MenuItem}">
+            <Setter Property="Background" Value="#222"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+
+        </Style>
+            
+
+
+
+
+            <!--
+        <Style x:Key="{x:Type Popup}" TargetType="{x:Type Popup}">
+            <Setter Property="B
+        </Style>-->
 
     </Application.Resources>
 </Application>

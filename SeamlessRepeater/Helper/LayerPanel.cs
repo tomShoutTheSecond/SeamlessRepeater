@@ -37,7 +37,6 @@ namespace SeamlessRepeater.Helper
 
                 return Visibility.Hidden;
             }
-            private set { }
         }
 
         private bool _isFirstDraw = true;
@@ -54,6 +53,10 @@ namespace SeamlessRepeater.Helper
         private DrawingGroup _outlineDrawingGroup;
         private Random _random = new Random();
 
+        //represents the center of the image as a proportion of it's size
+        //that is, origin.X and origin.Y go from 0 to 1 regardless of image size
+        private Point _origin;
+
         //for drag n drop
         private bool _isDragging;
         private double _x;
@@ -65,7 +68,7 @@ namespace SeamlessRepeater.Helper
 
         private enum Corner { None, TopLeft, TopRight, BottomLeft, BottomRight };
 
-        public LayerPanel(MainWindow window, Panel parent, BitmapImage bitmapImage)
+        public LayerPanel(MainWindow window, Panel parent, BitmapImage bitmapImage, Point origin)
         {
             //set Index and Name
             Index = LastUsedIndex;
@@ -107,6 +110,10 @@ namespace SeamlessRepeater.Helper
             //create storage for layers that need to be cleared on next draw
             _oldLayers = new List<Drawing>();
             _oldRects = new List<GeometryDrawing>();
+
+            //center image
+            _origin = origin;
+            SetCenterToPoint(new Point(0.5, 0.5));
 
             //add mouse listeners
             parent.MouseDown += (s, e) => OnMouseDown();
@@ -195,6 +202,24 @@ namespace SeamlessRepeater.Helper
 
             Draw();
             DrawOutline();
+        }
+
+        /// <summary>
+        /// Moves the center of the image to the point (0 - 1) which is given as a proportion of the size of the ImageGrid
+        /// </summary>
+        public void SetCenterToPoint(Point position, bool redraw = false)
+        {
+            var positionInImageGrid = new Point(position.Y * Workspace.ImageGridSize, position.X * Workspace.ImageGridSize);
+
+            double actualWidth = _originalBitmapImage.PixelWidth * _percentageSize;
+            double actualHeight = _originalBitmapImage.PixelHeight * _percentageSize;
+            var xOffset = _origin.X * actualWidth;
+            var yOffset = _origin.Y * actualHeight;
+
+            _x = positionInImageGrid.X - xOffset;
+            _y = positionInImageGrid.Y - yOffset;
+
+            if (redraw) Draw();
         }
 
         public void ClearOutline()

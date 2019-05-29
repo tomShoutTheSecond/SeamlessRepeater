@@ -18,10 +18,11 @@ namespace SeamlessRepeater.Helper
         public const int ImageGridSize = 500;
         public static Grid BackgroundLayer;
         public static Grid ImageGrid;
+        public List<LayerPanel> Layers { get; set; }
 
-        private List<LayerPanel> _layers { get; set; }
         private ZoomBorder _workspaceZoomBorder;
         private MainWindow _window;
+        private PatternMenuController _patternController;
         private string _oldAngleText;
 
         public Workspace(MainWindow window)
@@ -50,13 +51,15 @@ namespace SeamlessRepeater.Helper
             _window.LayerSizeDownButton.Click += (s, e) => LayerSizeDown();
             _window.LayerSizeUpButton.Click += (s, e) => LayerSizeUp();
 
-            _layers = new List<LayerPanel>();
+            Layers = new List<LayerPanel>();
             _window.LayersListView.Background = CustomBrushes.VeryDarkGray;
-            _window.LayersListView.ItemsSource = _layers;
+            _window.LayersListView.ItemsSource = Layers;
             _window.LayersListView.SelectionChanged += OnLayerSelected;
             _window.LayersListView.MouseDoubleClick += OnLayerDoubleClick;
 
             _window.BackgroundColorBackground.Background = CustomBrushes.CheckerBoardDarkSmall;
+
+            _patternController = new PatternMenuController(window, this);
         }
 
         public void WorkspaceZoom(bool isIn)
@@ -86,7 +89,7 @@ namespace SeamlessRepeater.Helper
         {
             //update layer angle if text changed
 
-            if (_layers.Count == 0)
+            if (Layers.Count == 0)
             {
                 ResetAngleTextBox();
                 return;
@@ -107,7 +110,7 @@ namespace SeamlessRepeater.Helper
                 return;
             }
 
-            var selectedLayer = _layers[LayerPanel.SelectedLayerIndex];
+            var selectedLayer = Layers[LayerPanel.SelectedLayerIndex];
             Task.Run(async () => await selectedLayer.Rotate(newAngle));
 
             _window.LayerRotationSlider.Value = newAngle;
@@ -140,7 +143,7 @@ namespace SeamlessRepeater.Helper
 
             LayerPanel.SelectionColor = GetNewLayerSelectionColor(newColor);
 
-            foreach (var layer in _layers)
+            foreach (var layer in Layers)
                 layer.DrawOutline();
 
             _window.RepeatPreview.DrawRepeat();
@@ -149,30 +152,30 @@ namespace SeamlessRepeater.Helper
 
         private void LayerSizeDown()
         {
-            if (_layers.Count < 1) return;
+            if (Layers.Count < 1) return;
 
-            var selectedLayer = _layers[LayerPanel.SelectedLayerIndex];
+            var selectedLayer = Layers[LayerPanel.SelectedLayerIndex];
             selectedLayer.SizeDown();
         }
 
         private void LayerSizeUp()
         {
-            if (_layers.Count < 1) return;
+            if (Layers.Count < 1) return;
 
-            var selectedLayer = _layers[LayerPanel.SelectedLayerIndex];
+            var selectedLayer = Layers[LayerPanel.SelectedLayerIndex];
             selectedLayer.SizeUp();
         }
 
         private void SwapLayers(int firstIndex, int secondIndex)
         {
-            var selectedLayer = _layers[LayerPanel.SelectedLayerIndex];
+            var selectedLayer = Layers[LayerPanel.SelectedLayerIndex];
 
             //change indexes
-            _layers[firstIndex].SetIndex(secondIndex);
-            _layers[secondIndex].SetIndex(firstIndex);
+            Layers[firstIndex].SetIndex(secondIndex);
+            Layers[secondIndex].SetIndex(firstIndex);
 
             //swap position in the list (changes order in ListView)
-            _layers.Swap(firstIndex, secondIndex);
+            Layers.Swap(firstIndex, secondIndex);
 
             LayerPanel.SelectedLayerIndex = selectedLayer.Index;
 
@@ -181,12 +184,12 @@ namespace SeamlessRepeater.Helper
 
         public void OnMoveDownClick(object sender, RoutedEventArgs e)
         {
-            if (_layers.Count < 2) return;
+            if (Layers.Count < 2) return;
 
             var button = ((Button)sender);
             var row = (LayerPanel)button.DataContext;
 
-            var listIndex = _layers.IndexOf(row);
+            var listIndex = Layers.IndexOf(row);
             var layerAboveListIndex = listIndex - 1;
 
             if (layerAboveListIndex < 0) return; //is already on top
@@ -196,15 +199,15 @@ namespace SeamlessRepeater.Helper
 
         public void OnMoveUpClick(object sender, RoutedEventArgs e)
         {
-            if (_layers.Count < 2) return;
+            if (Layers.Count < 2) return;
 
             var button = ((Button)sender);
             var row = (LayerPanel)button.DataContext;
 
-            var listIndex = _layers.IndexOf(row);
+            var listIndex = Layers.IndexOf(row);
             var layerAboveListIndex = listIndex + 1;
 
-            if (layerAboveListIndex > _layers.Count - 1) return; //is already on top
+            if (layerAboveListIndex > Layers.Count - 1) return; //is already on top
 
             SwapLayers(listIndex, layerAboveListIndex);
         }
@@ -227,10 +230,10 @@ namespace SeamlessRepeater.Helper
 
             _window.LayersListView.Items.Refresh();
 
-            foreach (var layer in _layers)
+            foreach (var layer in Layers)
                 layer.ClearOutline();
 
-            var selectedLayer = _layers[LayerPanel.SelectedLayerIndex];
+            var selectedLayer = Layers[LayerPanel.SelectedLayerIndex];
             _window.LayerSettingsTitle.Content = selectedLayer.LayerName;
             selectedLayer.DrawOutline();
 
@@ -244,7 +247,7 @@ namespace SeamlessRepeater.Helper
 
             if (_window.LayersListView.SelectedIndex == -1) return;
 
-            var selectedLayer = _layers[LayerPanel.SelectedLayerIndex];
+            var selectedLayer = Layers[LayerPanel.SelectedLayerIndex];
             RenameLayer(selectedLayer);
         }
 
@@ -286,13 +289,13 @@ namespace SeamlessRepeater.Helper
             ImageGrid.Children.Remove(layer);
 
             //remove from list
-            _layers.Remove(layer);
+            Layers.Remove(layer);
             _window.LayersListView.Items.Refresh();
 
             //sort out layer indexes so they are consecutive
-            foreach (var layerPanel in _layers)
+            foreach (var layerPanel in Layers)
             {
-                int index = _layers.IndexOf(layerPanel);
+                int index = Layers.IndexOf(layerPanel);
                 layerPanel.SetIndex(index);
 
                 //clear outlines
@@ -300,11 +303,11 @@ namespace SeamlessRepeater.Helper
             }
 
             LayerPanel.SelectedLayerIndex = 0;
-            LayerPanel.LastUsedIndex = _layers.Count;
+            LayerPanel.LastUsedIndex = Layers.Count;
 
             _window.RepeatPreview.DrawRepeat();
 
-            if (_layers.Count == 0) //removed the last layer
+            if (Layers.Count == 0) //removed the last layer
             {
                 _window.LayerRotationSlider.Value = 0;
                 var angle = (float)_window.LayerRotationSlider.Value;
@@ -312,7 +315,7 @@ namespace SeamlessRepeater.Helper
                 return;
             }
 
-            var selectedLayer = _layers[LayerPanel.SelectedLayerIndex];
+            var selectedLayer = Layers[LayerPanel.SelectedLayerIndex];
             selectedLayer.DrawOutline();
         }
 
@@ -332,12 +335,12 @@ namespace SeamlessRepeater.Helper
         private void StartImageImport()
         {
             var setOriginWindow = new SetOriginWindow();
-            setOriginWindow.Show();
+            setOriginWindow.ShowDialog();
         }
 
-        public void AddNewLayer(BitmapImage image)
+        public void AddNewLayer(BitmapImage image, Point origin)
         {
-            var newLayer = new LayerPanel(_window, ImageGrid, image)
+            var newLayer = new LayerPanel(_window, ImageGrid, image, origin)
             {
                 Width = ImageGrid.Width,
                 Height = ImageGrid.Height
@@ -349,12 +352,12 @@ namespace SeamlessRepeater.Helper
             LayerPanel.SelectedLayerIndex = newLayer.Index;
             _window.LayerSettingsTitle.Content = newLayer.LayerName;
 
-            foreach (var layer in _layers)
+            foreach (var layer in Layers)
                 layer.ClearOutline();
             newLayer.DrawOutline();
 
             //add to list
-            _layers.Add(newLayer);
+            Layers.Add(newLayer);
             _window.LayersListView.Items.Refresh();
 
             _window.RepeatPreview.DrawRepeat();
@@ -369,7 +372,7 @@ namespace SeamlessRepeater.Helper
 
         public void OnLayerRotationEnd(object sender, System.Windows.Controls.Primitives.DragCompletedEventArgs e)
         {
-            if (_layers.Count == 0)
+            if (Layers.Count == 0)
             {
                 _window.LayerRotationSlider.Value = 0;
                 return;
@@ -387,7 +390,7 @@ namespace SeamlessRepeater.Helper
 
             angle = (float)_window.LayerRotationSlider.Value;
 
-            var selectedLayer = _layers[LayerPanel.SelectedLayerIndex];
+            var selectedLayer = Layers[LayerPanel.SelectedLayerIndex];
             Task.Run(async () => await selectedLayer.Rotate(angle));
 
             _window.LayerAngleTextBox.Text = $"{angle}°";

@@ -60,9 +60,9 @@ namespace SeamlessRepeater
             _workspace.OnDeleteClick(sender, e);
         }
 
-        public void FinishImageImport(BitmapImage newImage)
+        public void FinishImageImport(BitmapImage newImage, Point origin)
         {
-            _workspace.AddNewLayer(newImage);
+            _workspace.AddNewLayer(newImage, origin);
         }
 
         private void OnResetWorkspaceView(object sender, RoutedEventArgs e)

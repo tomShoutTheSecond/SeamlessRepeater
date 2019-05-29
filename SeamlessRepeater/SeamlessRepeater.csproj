@@ -88,6 +88,7 @@
     <Compile Include="Helper\LayerPanel.cs" />
     <Compile Include="Helper\ListExtensions.cs" />
     <Compile Include="Helper\OriginPointer.cs" />
+    <Compile Include="Helper\PatternMenuController.cs" />
     <Compile Include="Helper\RepeatPreview.cs" />
     <Compile Include="Helper\Workspace.cs" />
     <Compile Include="Helper\ZoomBorder.cs" />
