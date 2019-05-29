@@ -36,15 +36,26 @@ namespace SeamlessRepeater.Helper
                     break;
             }
 
-            int iterations = Math.Min(_workspace.Layers.Count, coordinates.Length);
-            for (int i = 0; i < iterations; i++)
+            for (int i = 0; i < _workspace.Layers.Count; i++)
             {
                 var layer = _workspace.Layers[i];
-                var coordinate = coordinates[i];
+                var coordinate = GetCoordinate(coordinates, i);
                 layer.SetCenterToPoint(coordinate, true);
 
                 if (layer.Selected) layer.DrawOutline();
             }
+        }
+
+        /// <summary>
+        /// Gets a coordinate from the array for a specific layer
+        /// </summary>
+        private Point GetCoordinate(Point[] coordinates, int layerIndex)
+        {
+            //loop around the coordinates array when we reach the end so we can position infinite layers
+            while (layerIndex > coordinates.Length - 1)
+                layerIndex -= coordinates.Length;
+
+            return coordinates[layerIndex];
         }
     }
 }

@@ -36,15 +36,18 @@ namespace SeamlessRepeater.Windows
         protected override void OnContentRendered(EventArgs e)
         {
             GetImageFromFile();
+
+            _originPointer = new OriginPointer(this, DrawableGrid);
+
+            AcceptOriginButton.Click += (s, ev) => Finish();
         }
 
         private void InitializeWindow()
         {
+            MainGrid.Background = CustomBrushes.VeryDarkGray;
+            DrawableGrid.Background = CustomBrushes.CheckerBoardDark;
+
             SizeChanged += OnWindowResize;
-
-            _originPointer = new OriginPointer(this, DrawableGrid);
-
-            AcceptOriginButton.Click += (s, e) => Finish();
         }
 
         private void Finish()
@@ -56,7 +59,7 @@ namespace SeamlessRepeater.Windows
 
         private void OnWindowResize(object sender, SizeChangedEventArgs e)
         {
-            _originPointer.Draw();
+            _originPointer?.Draw();
         }
 
         private void GetImageFromFile()

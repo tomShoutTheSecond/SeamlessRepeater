@@ -30,6 +30,8 @@ namespace SeamlessRepeater.Helper
             _panel.MouseDown += OnMouseDown;
             _panel.MouseUp += OnMouseUp;
             _panel.MouseMove += OnMouseMove;
+
+            Draw();
         }
 
         public void Draw()
@@ -69,6 +71,33 @@ namespace SeamlessRepeater.Helper
                 verticalLine.VerticalAlignment = VerticalAlignment.Top;
 
                 _canvas.Children.Add(verticalLine);
+
+                var horizontalLineThin = new Line();
+                horizontalLineThin.X1 = _panel.ActualWidth * _x - pointerSize;
+                horizontalLineThin.X2 = _panel.ActualWidth * _x + pointerSize;
+                horizontalLineThin.Y1 = _panel.ActualHeight * _y;
+                horizontalLineThin.Y2 = horizontalLineThin.Y1;
+
+                horizontalLineThin.StrokeThickness = 1;
+                horizontalLineThin.Stroke = Brushes.Black;
+                horizontalLineThin.HorizontalAlignment = HorizontalAlignment.Left;
+                horizontalLineThin.VerticalAlignment = VerticalAlignment.Top;
+
+                _canvas.Children.Add(horizontalLineThin);
+
+                var verticalLineThin = new Line();
+                verticalLineThin.X1 = _panel.ActualWidth * _x;
+                verticalLineThin.X2 = verticalLineThin.X1;
+                verticalLineThin.Y1 = _panel.ActualHeight * _y - pointerSize;
+                verticalLineThin.Y2 = _panel.ActualHeight * _y + pointerSize;
+
+                verticalLineThin.StrokeThickness = 1;
+                verticalLineThin.Stroke = Brushes.Black;
+                verticalLineThin.HorizontalAlignment = HorizontalAlignment.Left;
+                verticalLineThin.VerticalAlignment = VerticalAlignment.Top;
+
+                _canvas.Children.Add(verticalLineThin);
+
 
                 _panel.Children.Add(_canvas);
             });

@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SeamlessRepeater.Windows"
         mc:Ignorable="d"
         Title="SetOriginWindow" Height="450" Width="400">
-    <Grid>
+    <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="7*"/>
             <RowDefinition Height="1*"/>
