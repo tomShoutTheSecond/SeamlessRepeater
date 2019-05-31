@@ -52,6 +52,7 @@ namespace SeamlessRepeater.Helper
         private (ImageDrawing, Rect?) _nullnull = (null, null);
         private DrawingGroup _outlineDrawingGroup;
         private Random _random = new Random();
+        private Workspace _workspace;
 
         //represents the center of the image as a proportion of it's size
         //that is, origin.X and origin.Y go from 0 to 1 regardless of image size
@@ -68,7 +69,7 @@ namespace SeamlessRepeater.Helper
 
         private enum Corner { None, TopLeft, TopRight, BottomLeft, BottomRight };
 
-        public LayerPanel(MainWindow window, Panel parent, BitmapImage bitmapImage, Point origin)
+        public LayerPanel(MainWindow window, Workspace workspace, Panel parent, BitmapImage bitmapImage, Point origin)
         {
             //set Index and Name
             Index = LastUsedIndex;
@@ -90,6 +91,8 @@ namespace SeamlessRepeater.Helper
             _originalBitmapImage.Freeze();
             _drawableBitmapImage = _originalBitmapImage;
             _window = window;
+
+            _workspace = workspace;
 
             _imageControl = new Image();
             _imageControl.Stretch = Stretch.None;
@@ -209,7 +212,7 @@ namespace SeamlessRepeater.Helper
         /// </summary>
         public void SetCenterToPoint(Point position, bool redraw = false)
         {
-            var positionInImageGrid = new Point(position.Y * Workspace.ImageGridSize, position.X * Workspace.ImageGridSize);
+            var positionInImageGrid = new Point(position.X * Workspace.ImageGridSize, position.Y * Workspace.ImageGridSize);
 
             double actualWidth = _originalBitmapImage.PixelWidth * _percentageSize;
             double actualHeight = _originalBitmapImage.PixelHeight * _percentageSize;
@@ -779,8 +782,42 @@ namespace SeamlessRepeater.Helper
 
             _window.ReleaseMouseCapture();
 
-            if(_oldX != _x || _oldY != _y) //if you moved the layer
+            SnapToGrid();
+
+            if (_oldX != _x || _oldY != _y) //if you moved the layer
                 Draw();
+        }
+
+        private void SnapToGrid()
+        {
+            if (_workspace.SnapPoints != null) //you have set a pattern
+            {
+                //find the point that represents the center of the image
+                double actualWidth = _originalBitmapImage.PixelWidth * _percentageSize;
+                double actualHeight = _originalBitmapImage.PixelHeight * _percentageSize;
+                var layerPosition = new Point(_x + actualWidth * 0.5, _y + actualHeight * 0.5);
+
+                //find the snap point closest to the center of the image
+                double minDistance = double.MaxValue;
+                var closestPoint = new Point();
+                foreach (var point in _workspace.SnapPoints)
+                {
+                    var snapPoint = new Point(point.X * Workspace.ImageGridSize, point.Y * Workspace.ImageGridSize);
+
+                    var distance = (snapPoint.Distance(layerPosition));
+                    if (distance < minDistance)
+                    {
+                        minDistance = distance;
+                        closestPoint = snapPoint;
+                    }
+                }
+
+                //set the image center to the closest snap point
+                _x = closestPoint.X - actualWidth * 0.5;
+                _y = closestPoint.Y - actualHeight * 0.5;
+
+                DrawOutline();
+            }
         }
 
         private void OnMouseMove()

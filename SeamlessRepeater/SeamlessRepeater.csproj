@@ -80,10 +80,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helper\ArrayExtensions.cs" />
     <Compile Include="Helper\CustomBrushes.cs" />
     <Compile Include="Helper\CustomScrollbar.cs" />
     <Compile Include="Helper\ErrorHandler.cs" />
     <Compile Include="Helper\FileHelper.cs" />
+    <Compile Include="Helper\GeometryUtilities.cs" />
     <Compile Include="Helper\ImageUtilities.cs" />
     <Compile Include="Helper\LayerPanel.cs" />
     <Compile Include="Helper\ListExtensions.cs" />

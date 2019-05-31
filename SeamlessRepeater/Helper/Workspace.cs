@@ -10,6 +10,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 using Xceed.Wpf.Toolkit;
+using System.Windows.Shapes;
 
 namespace SeamlessRepeater.Helper
 {
@@ -18,12 +19,14 @@ namespace SeamlessRepeater.Helper
         public const int ImageGridSize = 500;
         public static Grid BackgroundLayer;
         public static Grid ImageGrid;
+        public Point[] SnapPoints;
         public List<LayerPanel> Layers { get; set; }
 
         private ZoomBorder _workspaceZoomBorder;
         private MainWindow _window;
         private PatternMenuController _patternController;
         private string _oldAngleText;
+        private List<Ellipse> _snapPointMarkers = new List<Ellipse>();
 
         public Workspace(MainWindow window)
         {
@@ -41,6 +44,7 @@ namespace SeamlessRepeater.Helper
             _workspaceZoomBorder = new ZoomBorder(_window, _window.WorkspaceHolder);
             _workspaceZoomBorder.Child = ImageGrid;
             _window.WorkspaceHolder.Children.Add(_workspaceZoomBorder);
+            ImageGrid.ClipToBounds = true;
 
             _window.MouseDown += (s, e) => OnWindowMouseDown();
             _window.KeyDown += OnWindowKeyDown;
@@ -266,6 +270,75 @@ namespace SeamlessRepeater.Helper
             _workspaceZoomBorder.Reset();
         }
 
+        public void DrawSnapPoints()
+        {
+            foreach(var marker in _snapPointMarkers)
+            {
+                ImageGrid.Children.Remove(marker);
+            }
+
+            foreach(var snapPoint in SnapPoints)
+            {
+                AddSnapPointMarker(snapPoint);
+
+                var opposingSnapPoint = GetOpposingPointIfOnTheEdge(snapPoint);
+                if (opposingSnapPoint != null)
+                    AddSnapPointMarker(opposingSnapPoint.Value);
+            }
+
+            foreach (var layer in Layers)
+            {
+                layer.Draw();
+            }
+        }
+
+        private void AddSnapPointMarker(Point snapPoint)
+        {
+            int markerSize = 10;
+
+            var drawPosition = new Point(snapPoint.X * ImageGridSize, snapPoint.Y * ImageGridSize);
+
+            var circle = new Ellipse();
+
+            circle.Fill = Brushes.LightGray;
+            circle.StrokeThickness = 1;
+            circle.Stroke = Brushes.Black;
+
+            circle.Width = markerSize;
+            circle.Height = markerSize;
+
+            circle.HorizontalAlignment = HorizontalAlignment.Left;
+            circle.VerticalAlignment = VerticalAlignment.Top;
+
+            circle.Margin = new Thickness(drawPosition.X - markerSize * 0.5, drawPosition.Y - markerSize * 0.5, 0, 0);
+
+            ImageGrid.Children.Add(circle);
+            _snapPointMarkers.Add(circle);
+
+            Grid.SetZIndex(circle, -100);
+        }
+
+        /// <summary>
+        /// Returns the corresponding point on the other side of the ImageGrid if the snap point is on an edge of the ImageGrid
+        /// Returns null if not
+        /// </summary>
+        private Point? GetOpposingPointIfOnTheEdge(Point snapPoint)
+        {
+            if (snapPoint.X <= 0)
+                return new Point(snapPoint.X + 1, snapPoint.Y);
+
+            if (snapPoint.X > ImageGridSize)
+                return new Point(snapPoint.X - 1, snapPoint.Y);
+
+            if (snapPoint.Y <= 0)
+                return new Point(snapPoint.X, snapPoint.Y + 1);
+
+            if (snapPoint.Y > ImageGridSize)
+                return new Point(snapPoint.X, snapPoint.Y - 1);
+
+            return null;
+        }
+
         private Brush GetNewLayerSelectionColor(Color backgroundColor)
         {
             System.Drawing.Color color = System.Drawing.Color.FromArgb(backgroundColor.A, backgroundColor.R, backgroundColor.G, backgroundColor.B);
@@ -340,7 +413,7 @@ namespace SeamlessRepeater.Helper
 
         public void AddNewLayer(BitmapImage image, Point origin)
         {
-            var newLayer = new LayerPanel(_window, ImageGrid, image, origin)
+            var newLayer = new LayerPanel(_window, this, ImageGrid, image, origin)
             {
                 Width = ImageGrid.Width,
                 Height = ImageGrid.Height

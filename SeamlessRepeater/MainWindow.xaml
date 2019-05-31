@@ -137,6 +137,10 @@
                     <RowDefinition Height="42"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal">
                     <Button x:Name="WorkspaceZoomInButton" HorizontalAlignment="Left" VerticalAlignment="Top"  Grid.ColumnSpan="2" Margin="8" ToolTip="Zoom in">
                         <Image Source="Icons/magnify-plus-outline.png" Width="24" Height="24" SnapsToDevicePixels="True"/>
@@ -151,11 +155,14 @@
                         <Image Source="Icons/content-save.png" Width="24" Height="24" SnapsToDevicePixels="True"/>
                     </Button>
                     <Image x:Name="BusyIndicator" Source="Icons/circle-outline.png" Width="24" Height="24" SnapsToDevicePixels="True" ToolTip="Busy indicator"></Image>
-                    <Menu Margin="200 0 0 0" Height="18"> 
-                        <MenuItem x:Name="PatternMenuGrid" Header="Grid"/>
-                        <MenuItem x:Name="PatternMenuHex" Header="Hex"/>
-                    </Menu>
                 </StackPanel>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <Button x:Name="PatternMenuGrid" Content="Grid" Width="52" Height="26" HorizontalAlignment="Left" Margin="8"/>
+                    <Button x:Name="PatternMenuHex" Content="Hex" Width="52" Height="26" HorizontalAlignment="Left" Margin="8"/>
+                </StackPanel>
+
+                <Slider Grid.Column="1" Grid.Row="1" Margin="8"/>
 
                 <CheckBox x:Name="RedrawCheckbox" Grid.Row="1" Content="Redraw while dragging" HorizontalAlignment="Left" Width="291" Margin="8"/>
             </Grid>
