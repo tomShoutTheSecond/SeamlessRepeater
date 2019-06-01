@@ -159,7 +159,7 @@
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button x:Name="PatternMenuGrid" Content="Grid" Width="52" Height="26" HorizontalAlignment="Left" Margin="8"/>
-                    <Button x:Name="PatternMenuHex" Content="Hex" Width="52" Height="26" HorizontalAlignment="Left" Margin="8"/>
+                    <Button x:Name="PatternMenuHex" Content="Hex" Width="52" Height="26" HorizontalAlignment="Left" Margin="0,8,8,8"/>
                 </StackPanel>
 
                 <StackPanel Grid.Column="1" Grid.Row="1">
