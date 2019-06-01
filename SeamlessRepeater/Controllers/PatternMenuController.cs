@@ -28,14 +28,15 @@ namespace SeamlessRepeater.Helper
             Point[] coordinates = new Point[0];
 
             int density = (int)_mainWindow.PatternDensitySlider.Value;
+            var gridRectangles = GenerateRecursiveRectangles(density);
 
             switch (type)
             {
                 case PatternType.Grid:
-                    coordinates = GenerateRecursivePointsGrid(density);
+                    coordinates = GetCenterPoints(gridRectangles);
                     break;
                 case PatternType.Hex:
-                    coordinates = new[] { new Point(0.25, 0), new Point(0.75, 0), new Point(0, 0.5), new Point(0.5, 0.5) };
+                    coordinates = GetHexPoints(gridRectangles);
                     break;
             }
 
@@ -57,7 +58,7 @@ namespace SeamlessRepeater.Helper
         /// Then returns the central points for each rectangle
         /// </summary>
         /// <param name="iterations"></param>
-        private Point[] GenerateRecursivePointsGrid(int iterations)
+        private GridRectangle[] GenerateRecursiveRectangles(int iterations)
         {
             var wholeGrid = new GridRectangle(0, 0, 1, 1);
 
@@ -69,7 +70,7 @@ namespace SeamlessRepeater.Helper
                 rectanglesToSplit = quarters;
             }
 
-            return GetCenterPoints(rectanglesToSplit);
+            return rectanglesToSplit;
         }
 
         private GridRectangle[] SplitRectanglesInFour(GridRectangle[] rectangles)
@@ -94,6 +95,17 @@ namespace SeamlessRepeater.Helper
             }
 
             return centerPoints;
+        }
+
+        private Point[] GetHexPoints(GridRectangle[] rectangles)
+        {
+            var hexPoints = new List<Point>();
+            foreach(var rectangle in rectangles)
+            {
+                hexPoints.AddRange(rectangle.GetHexPoints());
+            }
+
+            return hexPoints.ToArray();
         }
 
         /// <summary>
@@ -131,6 +143,11 @@ namespace SeamlessRepeater.Helper
             public Point GetCenterPoint()
             {
                 return new Point(_x + 0.5 * _width, _y + 0.5 * _height);
+            }
+
+            public Point[] GetHexPoints()
+            {
+                return new[] { new Point(_x + 0.25 * _width, _y), new Point(_x + 0.75 * _width, _y), new Point(_x, _y + 0.5 * _height), new Point(_x + 0.5 * _width, _y + 0.5 * _height) };
             }
 
             /// <summary>
