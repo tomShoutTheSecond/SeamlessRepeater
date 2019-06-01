@@ -27,10 +27,12 @@ namespace SeamlessRepeater.Helper
         {
             Point[] coordinates = new Point[0];
 
+            int density = (int)_mainWindow.PatternDensitySlider.Value;
+
             switch (type)
             {
                 case PatternType.Grid:
-                    coordinates = new[] { new Point(0.25, 0.25), new Point(0.75, 0.75), new Point(0.75, 0.25), new Point(0.25, 0.75)  };
+                    coordinates = RecursivePointsGrid(density);//new[] { new Point(0.25, 0.25), new Point(0.75, 0.75), new Point(0.75, 0.25), new Point(0.25, 0.75)  };
                     break;
                 case PatternType.Hex:
                     coordinates = new[] { new Point(0.25, 0), new Point(0.75, 0), new Point(0, 0.5), new Point(0.5, 0.5) };
@@ -57,13 +59,64 @@ namespace SeamlessRepeater.Helper
             var topRightRect = new GridRectangle(0.5, 0, 0.5, 0.5);
             var bottomLeftRect = new GridRectangle(0, 0.5, 0.5, 0.5);
             var bottomRightRect = new GridRectangle(0.5, 0.5, 0.5, 0.5);
-
+            /*
             var topLeftCoords = topLeftRect.GetQuadrantCenterPoints();
             var topRightCoords = topRightRect.GetQuadrantCenterPoints();
             var bottomLeftCoords = bottomLeftRect.GetQuadrantCenterPoints();
-            var bottomRightCoords = bottomRightRect.GetQuadrantCenterPoints();
+            var bottomRightCoords = bottomRightRect.GetQuadrantCenterPoints();*/
 
-            return topLeftCoords.Append(topRightCoords).Append(bottomLeftCoords).Append(bottomRightCoords);
+            var topLeftCenter = topLeftRect.GetCenterPoint();
+            var topRightCenter = topRightRect.GetCenterPoint();
+            var bottomLeftCenter = bottomLeftRect.GetCenterPoint();
+            var bottomRightCenter = bottomRightRect.GetCenterPoint();
+
+
+            return new[] { topLeftCenter, topRightCenter, bottomLeftCenter, bottomRightCenter };//topLeftCoords.Append(topRightCoords).Append(bottomLeftCoords).Append(bottomRightCoords);
+        }
+
+
+        /// <summary>
+        /// Creates increasingly smaller grids by splitting each GridRectangle into four each time
+        /// Then returns the central points for each rectangle
+        /// </summary>
+        /// <param name="iterations"></param>
+        private Point[] RecursivePointsGrid(int iterations)
+        {
+            var wholeGrid = new GridRectangle(0, 0, 1, 1);
+
+            var rectanglesToSplit = new[] { wholeGrid };
+
+            for (int i = 0; i < iterations; i++)
+            {
+                var quarters = SplitRectanglesInFour(rectanglesToSplit);
+                rectanglesToSplit = quarters;
+            }
+
+            return GetCenterPoints(rectanglesToSplit);
+        }
+
+        private GridRectangle[] SplitRectanglesInFour(GridRectangle[] rectangles)
+        {
+            var centerPoints = new List<GridRectangle>();
+            foreach(var rectangle in rectangles)
+            {
+                var quarters = rectangle.SplitIntoFour();
+                centerPoints.AddRange(quarters);
+            }
+
+            return centerPoints.ToArray();
+        }
+
+        private Point[] GetCenterPoints(GridRectangle[] rectangles)
+        {
+            var centerPoints = new Point[rectangles.Length];
+            for (int i = 0; i < rectangles.Length; i++)
+            {
+                var thisRectangle = rectangles[i];
+                centerPoints[i] = thisRectangle.GetCenterPoint();
+            }
+
+            return centerPoints;
         }
 
         /// <summary>
@@ -97,7 +150,7 @@ namespace SeamlessRepeater.Helper
                 _width = width;
                 _height = height;
             }
-
+            /*
             /// <summary>
             /// Returns the central point for each quarter portion of this rectangle
             /// </summary>
@@ -109,6 +162,28 @@ namespace SeamlessRepeater.Helper
                 var bottomRightPoint = new Point(_x + 0.75 * _width, _y + 0.75 * _height);
 
                 return new[] { topLeftPoint, topRightPoint, bottomLeftPoint, bottomRightPoint };
+            }
+            */
+
+            public Point GetCenterPoint()
+            {
+                return new Point(_x + 0.5 * _width, _y + 0.5 * _height);
+            }
+
+            /// <summary>
+            /// Returns a GridRectangle for each quarter of this GridRectangle
+            /// </summary>
+            public GridRectangle[] SplitIntoFour()
+            {
+                double halfWidth = _width * 0.5;
+                double halfHeight = _height * 0.5;
+
+                var topLeftRect = new GridRectangle(_x, _y, halfWidth, halfHeight);
+                var topRightRect = new GridRectangle(_x + halfWidth, _y, halfWidth, halfHeight);
+                var bottomLeftRect = new GridRectangle(_x, _y + halfHeight, halfWidth, halfHeight);
+                var bottomRightRect = new GridRectangle(_x + halfWidth, _y + halfHeight, halfWidth, halfHeight);
+
+                return new[] { topLeftRect, topRightRect, bottomLeftRect, bottomRightRect };
             }
         }
     }
