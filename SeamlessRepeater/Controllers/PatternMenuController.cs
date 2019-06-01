@@ -32,7 +32,7 @@ namespace SeamlessRepeater.Helper
             switch (type)
             {
                 case PatternType.Grid:
-                    coordinates = RecursivePointsGrid(density);//new[] { new Point(0.25, 0.25), new Point(0.75, 0.75), new Point(0.75, 0.25), new Point(0.25, 0.75)  };
+                    coordinates = GenerateRecursivePointsGrid(density);
                     break;
                 case PatternType.Hex:
                     coordinates = new[] { new Point(0.25, 0), new Point(0.75, 0), new Point(0, 0.5), new Point(0.5, 0.5) };
@@ -52,35 +52,12 @@ namespace SeamlessRepeater.Helper
             _workspace.DrawSnapPoints();
         }
 
-        private Point[] GeneratePointsGrid()
-        {
-            //cut the grid into four parts
-            var topLeftRect = new GridRectangle(0, 0, 0.5, 0.5);
-            var topRightRect = new GridRectangle(0.5, 0, 0.5, 0.5);
-            var bottomLeftRect = new GridRectangle(0, 0.5, 0.5, 0.5);
-            var bottomRightRect = new GridRectangle(0.5, 0.5, 0.5, 0.5);
-            /*
-            var topLeftCoords = topLeftRect.GetQuadrantCenterPoints();
-            var topRightCoords = topRightRect.GetQuadrantCenterPoints();
-            var bottomLeftCoords = bottomLeftRect.GetQuadrantCenterPoints();
-            var bottomRightCoords = bottomRightRect.GetQuadrantCenterPoints();*/
-
-            var topLeftCenter = topLeftRect.GetCenterPoint();
-            var topRightCenter = topRightRect.GetCenterPoint();
-            var bottomLeftCenter = bottomLeftRect.GetCenterPoint();
-            var bottomRightCenter = bottomRightRect.GetCenterPoint();
-
-
-            return new[] { topLeftCenter, topRightCenter, bottomLeftCenter, bottomRightCenter };//topLeftCoords.Append(topRightCoords).Append(bottomLeftCoords).Append(bottomRightCoords);
-        }
-
-
         /// <summary>
         /// Creates increasingly smaller grids by splitting each GridRectangle into four each time
         /// Then returns the central points for each rectangle
         /// </summary>
         /// <param name="iterations"></param>
-        private Point[] RecursivePointsGrid(int iterations)
+        private Point[] GenerateRecursivePointsGrid(int iterations)
         {
             var wholeGrid = new GridRectangle(0, 0, 1, 1);
 
@@ -150,20 +127,6 @@ namespace SeamlessRepeater.Helper
                 _width = width;
                 _height = height;
             }
-            /*
-            /// <summary>
-            /// Returns the central point for each quarter portion of this rectangle
-            /// </summary>
-            public Point[] GetQuadrantCenterPoints()
-            {
-                var topLeftPoint = new Point(_x + 0.25 * _width, _y + 0.25 * _height);
-                var topRightPoint = new Point(_x + 0.75 * _width, _y + 0.25 * _height);
-                var bottomLeftPoint = new Point(_x + 0.25 * _width, _y + 0.75 * _height);
-                var bottomRightPoint = new Point(_x + 0.75 * _width, _y + 0.75 * _height);
-
-                return new[] { topLeftPoint, topRightPoint, bottomLeftPoint, bottomRightPoint };
-            }
-            */
 
             public Point GetCenterPoint()
             {
