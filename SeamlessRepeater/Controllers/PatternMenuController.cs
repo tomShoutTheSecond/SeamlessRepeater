@@ -102,7 +102,7 @@ namespace SeamlessRepeater.Helper
             var hexPoints = new List<Point>();
             foreach(var rectangle in rectangles)
             {
-                hexPoints.AddRange(rectangle.GetHexPoints());
+                hexPoints.AddRange(rectangle.GetHexPoints(_mainWindow.PatternOffsetSlider.Value));
             }
 
             return hexPoints.ToArray();
@@ -145,9 +145,12 @@ namespace SeamlessRepeater.Helper
                 return new Point(_x + 0.5 * _width, _y + 0.5 * _height);
             }
 
-            public Point[] GetHexPoints()
+            public Point[] GetHexPoints(double offset)
             {
-                return new[] { new Point(_x + 0.25 * _width, _y), new Point(_x + 0.75 * _width, _y), new Point(_x, _y + 0.5 * _height), new Point(_x + 0.5 * _width, _y + 0.5 * _height) };
+                //offset is 0-1
+                double xOffset = offset * 0.5;
+
+                return new[] { new Point(_x + xOffset * _width, _y), new Point(_x + xOffset + 0.5 * _width, _y), new Point(_x, _y + 0.5 * _height), new Point(_x + 0.5 * _width, _y + 0.5 * _height) };
             }
 
             /// <summary>

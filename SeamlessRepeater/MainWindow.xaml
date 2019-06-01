@@ -162,10 +162,16 @@
                     <Button x:Name="PatternMenuHex" Content="Hex" Width="52" Height="26" HorizontalAlignment="Left" Margin="8"/>
                 </StackPanel>
 
-                <DockPanel Grid.Column="1" Grid.Row="1">
-                    <Label Content="Density" Height="32" DockPanel.Dock="Left"/>
-                    <Slider x:Name="PatternDensitySlider" TickPlacement="BottomRight" TickFrequency="1" Maximum="5" IsSnapToTickEnabled="True" Margin="8" Height="32"/>
-                </DockPanel>
+                <StackPanel Grid.Column="1" Grid.Row="1">
+                    <DockPanel>
+                        <Label Content="Density" Width="60" Height="32" HorizontalContentAlignment="Right" DockPanel.Dock="Left"/>
+                        <Slider x:Name="PatternDensitySlider" TickPlacement="BottomRight" TickFrequency="1" Maximum="5" IsSnapToTickEnabled="True" Margin="8,0,8,0" Height="32"/>
+                    </DockPanel>
+                    <DockPanel>
+                        <Label Content="Offset" Width="60" Height="32" HorizontalContentAlignment="Right" DockPanel.Dock="Left"/>
+                        <Slider x:Name="PatternOffsetSlider" TickPlacement="BottomRight" TickFrequency="0.1" Maximum="1" Value="0.5" IsSnapToTickEnabled="True" Margin="8,0,8,0" Height="32"/>
+                    </DockPanel>
+                </StackPanel>
 
                 <CheckBox x:Name="RedrawCheckbox" Grid.Row="1" Content="Redraw while dragging" HorizontalAlignment="Left" Width="291" Margin="8"/>
             </Grid>

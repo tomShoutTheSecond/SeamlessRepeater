@@ -294,7 +294,7 @@ namespace SeamlessRepeater.Helper
 
         private void AddSnapPointMarker(Point snapPoint)
         {
-            int markerSize = 10;
+            int markerSize = 8;
 
             var drawPosition = new Point(snapPoint.X * ImageGridSize, snapPoint.Y * ImageGridSize);
 
